@@ -157,7 +157,7 @@ const validators = {
 export default {
   name: 'x-input',
   created () {
-    this.currentValue = this.value || ''
+    this.currentValue = (this.value === undefined || this.value === null) ? '' : this.value
     if (!this.title && !this.placeholder && !this.currentValue) {
       console.warn('no title and no placeholder?')
     }
@@ -292,18 +292,18 @@ export default {
     blur () {
       this.$refs.input.blur()
     },
-    focusHandler () {
-      this.$emit('on-focus', this.currentValue)
+    focusHandler ($event) {
+      this.$emit('on-focus', this.currentValue, $event)
     },
-    onBlur () {
+    onBlur ($event) {
       this.setTouched()
       this.validate()
-      this.$emit('on-blur', this.currentValue)
+      this.$emit('on-blur', this.currentValue, $event)
     },
     onKeyUp (e) {
       if (e.key === 'Enter') {
         e.target.blur()
-        this.$emit('on-enter', this.currentValue)
+        this.$emit('on-enter', this.currentValue, e)
       }
     },
     getError () {
@@ -334,7 +334,9 @@ export default {
         if (validator) {
           this.valid = validator[ 'fn' ](this.currentValue)
           if (!this.valid) {
+            this.forceShowError = true
             this.errors.format = validator[ 'msg' ] + '格式不对哦~'
+            this.getError()
             return
           } else {
             delete this.errors.format

@@ -50,6 +50,7 @@ export default function (nav, options = {}) {
   }
 
   let navOffsetY = nav.offsetTop - offset
+  scrollBox.removeEventListener('scroll', scrollBox.e)
 
   const getTop = function () {
     if (scrollBox === window) {
@@ -83,9 +84,8 @@ export default function (nav, options = {}) {
         nav.classList.remove('vux-fixed')
       }
     }
-    setTimeout(() => {
-      navOffsetY = nav.offsetTop - offset
-      scrollBox.addEventListener('scroll', scrollHandler)
-    }, 1000)
+    navOffsetY = nav.offsetTop - offset
+    scrollBox.e = scrollHandler
+    scrollBox.addEventListener('scroll', scrollHandler)
   }
 }
